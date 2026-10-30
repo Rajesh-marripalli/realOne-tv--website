@@ -1,0 +1,319 @@
+<div class="site-shell" id="top">
+  <div class="announcement"><span class="announce-dot"></span> EVERY VIEW DESERVES TO BE EXTRAORDINARY <span class="announce-separator">/</span> <span class="announce-muted">WELCOME TO THE REALONE EXPERIENCE</span></div>
+
+  <header class="site-header">
+    <div class="nav-inner container">
+      <a class="brand" href="#top" aria-label="realOne home" (click)="isMenuOpen.set(false)"><span class="brand-emblem" aria-hidden="true"><span></span></span><span>real<span class="brand-one">One</span><span class="brand-period">.</span></span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#categories">Categories</a>
+        <a href="#collection">All displays</a>
+        <a href="#solutions">Business screens</a>
+        <a href="#connect">Connect</a>
+      </nav>
+      <div class="nav-actions">
+        <span class="nav-local"><span class="local-indicator"></span> YOUR LOCAL TV DESTINATION</span>
+        <button type="button" class="btn btn-nav" (click)="openEnquiry()">Let's talk <span aria-hidden="true">↗</span></button>
+      </div>
+      <button type="button" class="mobile-menu-button" (click)="isMenuOpen.update(v => !v)" [attr.aria-expanded]="isMenuOpen()" aria-label="Toggle menu">
+        <span></span><span></span>
+      </button>
+    </div>
+    @if (isMenuOpen()) {
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="#categories" (click)="isMenuOpen.set(false)">Categories <span>↗</span></a>
+        <a href="#collection" (click)="isMenuOpen.set(false)">All displays <span>↗</span></a>
+        <a href="#solutions" (click)="isMenuOpen.set(false)">Business screens <span>↗</span></a>
+        <a href="#connect" (click)="isMenuOpen.set(false)">Connect <span>↗</span></a>
+        <button type="button" (click)="openEnquiry()">Enquire now ↗</button>
+      </nav>
+    }
+  </header>
+
+  <main>
+    <section class="hero section-wrap" aria-labelledby="hero-title">
+      <video #backgroundVideo class="hero-ambient-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="images/owl-poster.jpg"><source src="media/owl-wildlife.mp4" type="video/mp4"></video>
+      <div class="hero-forest-overlay" aria-hidden="true"></div>
+      <div class="hero-dark-overlay" aria-hidden="true"></div>
+      <div class="hero-glow hero-glow-one"></div><div class="hero-glow hero-glow-two"></div>
+      <div class="hummingbird-flight" aria-hidden="true"><img src="images/hummingbird.svg" alt=""><span class="hummingbird-wing"></span></div>
+      <div class="container hero-container">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> SEE NATURE COME ALIVE <span class="eyebrow-line"></span></div>
+          <h1 id="hero-title">Life, in every<br><em>pixel.</em></h1>
+          <p class="hero-lead">From immersive home cinemas to displays that power businesses. Experience the beauty of every moment with RealOne.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="#collection">Explore all displays <span class="round-arrow" aria-hidden="true">↗</span></a>
+            <button type="button" class="btn-video" (click)="playDemo()"><span class="play-ring" aria-hidden="true">▶</span> Experience the picture</button>
+          </div>
+          <div class="hero-note"><span class="hero-note-star">✳</span><span>FROM LIVING ROOMS TO BIG SCREENS.<br>FROM NATURE TO NEXT-LEVEL SIGNAGE.</span></div>
+        </div>
+
+        <div class="hero-visual" id="experience">
+          <div class="stage-halo"></div>
+          <div class="stage-topline"><span>INTRODUCING THE VIEW</span><span class="stage-topline-right"><span class="live-dot"></span> LIVE EXPERIENCE</span></div>
+          <div class="tv-assembly">
+            <div class="tv-frame">
+              <div class="tv-glass" [class.fit-video]="isVideoContained()">
+                <video #heroVideo class="wildlife-video" [class.video-hidden]="activeSceneId() !== 'owl'" autoplay muted loop playsinline preload="metadata" poster="images/owl-poster.jpg" (loadedmetadata)="synchronizeVideo()" (play)="isPaused.set(false)" (pause)="isPaused.set(true)">
+                  <source src="media/owl-wildlife.mp4" type="video/mp4">
+                </video>
+                @if (activeSceneId() !== 'owl') {
+                  <img class="scene-image" [src]="activeScene().image" [alt]="activeScene().title + ' scenic television demo'" (error)="onImageError($event)">
+                }
+                <div class="screen-vignette"></div>
+                <div class="on-screen-top"><span>realOne <b>VISION</b></span><span class="on-screen-cross">✣</span></div>
+                <div class="on-screen-bottom"><span class="screen-live"><span></span> CINEMA MODE</span><span>IMMERSIVE VIEW</span></div>
+              </div>
+              <div class="tv-chin"><span class="chin-mark">real<span>One</span></span><span class="tv-power"></span></div>
+            </div>
+            <div class="tv-neck"></div><div class="tv-base"></div>
+          </div>
+          <div class="tv-reflection"></div>
+          <div class="scene-controller">
+            <div class="scene-controller-label"><span class="label-mini">EXPLORE THE PICTURE</span><span class="scene-count">{{activeScene().number}} <span>/ 03</span></span></div>
+            <div class="scene-switcher" aria-label="Select a TV demo scene">
+              @for (scene of scenes; track scene.id) {
+                <button type="button" class="scene-item" [class.active]="activeSceneId() === scene.id" (click)="selectScene(scene.id)" [attr.aria-pressed]="activeSceneId() === scene.id">
+                  <span class="scene-number">{{scene.number}}</span><span class="scene-title">{{scene.title}}</span>
+                </button>
+              }
+            </div>
+            <div class="scene-tools">
+              @if (activeSceneId() === 'owl') {
+                <button type="button" class="scene-tool" (click)="togglePlayback()" [attr.aria-label]="isPaused() ? 'Play wildlife video' : 'Pause wildlife video'">{{isPaused() ? '▶ Play' : 'Ⅱ Pause'}}</button>
+                <button type="button" class="scene-tool" (click)="toggleVideoFit()" [attr.aria-pressed]="isVideoContained()">{{isVideoContained() ? '▣ Fill' : '□ Fit'}}</button>
+              } @else {
+                <span class="still-label">STILL IMAGE PREVIEW</span>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="hero-bottom"><span>EXPLORE ALL DISPLAY TYPES <span class="scroll-rule"></span></span><span>01 — AN EXPERIENCE BEYOND ORDINARY</span></div>
+      </div>
+    </section>
+
+    <section class="feature-ribbon" aria-label="Why choose realOne">
+      <div class="ribbon-track"><span>MORE COLOR</span><b>✳</b><span>MORE CLARITY</span><b>✳</b><span>MORE CONNECTION</span><b>✳</b><span>MORE MAGIC</span><b>✳</b><span>MORE COLOR</span><b>✳</b><span>MORE CLARITY</span><b>✳</b><span>MORE CONNECTION</span><b>✳</b><span>MORE MAGIC</span><b>✳</b></div>
+    </section>
+
+
+    <section id="categories" class="categories-section section-wrap" aria-labelledby="category-heading">
+      <div class="container">
+        <div class="section-heading-row" appReveal>
+          <div><p class="section-kicker"><span class="kicker-circle">✳</span> EVERY SCREEN HAS A STORY</p><h2 id="category-heading">A display for<br><span class="text-muted">every possibility.</span></h2></div>
+          <p class="section-sidecopy">Home entertainment. Shopfront magic. Workstation clarity. Find what your space needs.</p>
+        </div>
+        <div class="category-grid">
+          @for (category of categories; track category.id) {
+            <button type="button" class="category-card" appReveal (click)="setCategory(category.id)" [attr.aria-label]="'Browse ' + category.name">
+              <img [src]="category.image" [alt]="category.name + ' illustrative display content'" (error)="onImageError($event)" loading="lazy">
+              <span class="category-shade"></span><span class="category-index">{{category.countLabel}} / 10</span>
+              <span class="category-symbol">{{category.icon}}</span>
+              <span class="category-copy"><small>{{category.short}}</small><strong>{{category.name}}</strong><span>{{category.description}}</span></span>
+              <span class="category-arrow">↗</span>
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="collection" class="collection-section section-wrap" aria-labelledby="collection-heading">
+      <div class="container">
+        <div class="section-heading-row" appReveal>
+          <div><p class="section-kicker"><span class="kicker-circle">✳</span> DISCOVER YOUR NEXT DISPLAY</p><h2 id="collection-heading">Find your screen.<br><span class="text-muted">Compare your options.</span></h2></div>
+          <p class="section-sidecopy">Home TVs, digital advertising, video walls, presentation screens and monitors — all together in one showroom.</p>
+        </div>
+        <div class="catalog-filter-line" appReveal>
+          <label for="category-filter">DISPLAY CATEGORY</label>
+          <select id="category-filter" [ngModel]="categoryFilter()" (ngModelChange)="setCategory($event)">
+            <option value="all">All display categories</option>
+            @for (category of categories; track category.id) { <option [value]="category.id">{{category.name}}</option> }
+          </select>
+          <span class="product-count">{{filteredProducts().length}} OF {{products.length}} SAMPLE SCREENS · {{categoryName()}}</span>
+        </div>
+        <div class="collection-controls" appReveal>
+          <div class="filter-pills" role="group" aria-label="Filter by screen size">
+            <button type="button" [class.selected]="sizeFilter() === 'all'" (click)="setSizeFilter('all')">All sizes</button>
+            <button type="button" [class.selected]="sizeFilter() === 'small'" (click)="setSizeFilter('small')">Up to 43”</button>
+            <button type="button" [class.selected]="sizeFilter() === 'medium'" (click)="setSizeFilter('medium')">49–55”</button>
+            <button type="button" [class.selected]="sizeFilter() === 'large'" (click)="setSizeFilter('large')">65–85”</button>
+            <button type="button" [class.selected]="sizeFilter() === 'extra'" (click)="setSizeFilter('extra')">86”+</button>
+          </div>
+          <button type="button" class="reset-filters" (click)="setCategory('all')">Reset filters ↗</button>
+        </div>
+        <div class="product-grid">
+          @for (product of filteredProducts(); track product.id) {
+            <article class="product-card" appReveal>
+              <div class="product-card-top"><span class="product-type">{{product.categoryLabel}}</span><span class="card-index">{{product.number}} / {{products.length}}</span></div>
+              <div class="product-visual">
+                <div class="product-glow" [style.background]="product.accent"></div>
+                <div class="mini-tv"><div class="mini-tv-screen"><img [src]="product.image" [alt]="product.name + ' illustrative nature display'" (error)="onImageError($event)" loading="lazy"></div><div class="mini-tv-chin">realOne</div></div>
+                <div class="mini-tv-stand"></div>
+              </div>
+              <div class="product-meta"><span>{{product.feature}}</span><span class="product-size">{{product.size}}”</span></div>
+              <h3>{{product.name}}</h3><p class="product-tagline">{{product.subtitle}}</p>
+              <div class="product-specs"><span>{{product.resolution}}</span><span>{{product.panel}}</span><span>{{product.refresh}}</span></div>
+              <div class="product-actions"><button type="button" class="product-detail" (click)="openProduct(product)">View details ↗</button><button type="button" class="product-enquire" (click)="openEnquiry(product)">Ask for quote <span>↗</span></button></div>
+              <div class="product-bottom"><span class="product-price">PRICE ON REQUEST</span><button type="button" class="compare-add" [class.added]="isCompared(product.id)" (click)="toggleCompare(product.id)" [attr.aria-pressed]="isCompared(product.id)" [attr.aria-label]="(isCompared(product.id) ? 'Remove ' : 'Add ') + product.name + (isCompared(product.id) ? ' from' : ' to') + ' comparison'"><span>{{isCompared(product.id) ? '✓' : '+'}}</span> Compare</button></div>
+            </article>
+          }
+        </div>
+        @if (filteredProducts().length === 0) { <div class="empty-catalog">No sample displays in this combination. <button type="button" (click)="setCategory('all')">Show all categories</button></div> }
+        <p class="catalog-disclaimer">*Concept product names and specifications are placeholders for demonstration. Confirm actual stock, features, and prices with the seller before publishing.</p>
+      </div>
+    </section>
+
+
+    <section id="solutions" class="solutions-section section-wrap" aria-labelledby="solutions-title">
+      <div class="container">
+        <div class="section-heading-row" appReveal>
+          <div><p class="section-kicker"><span class="kicker-circle">✳</span> REALONE FOR BUSINESS</p><h2 id="solutions-title">Screens that work<br><span class="text-muted">as hard as you do.</span></h2></div>
+          <p class="section-sidecopy">From digital menus to large-format LED walls, explore how a display can transform your business.</p>
+        </div>
+        <div class="solutions-layout">
+          <button type="button" class="solution-feature" (click)="setCategory('video-wall')" appReveal>
+            <img [src]="natureImages.aurora" alt="Colourful image representing LED video walls" (error)="onImageError($event)" loading="lazy">
+            <span class="solution-content"><small>01 / IMPACT AT SCALE</small><strong>LED video walls.</strong><span>Think big. Go brilliant. Explore modular digital displays.</span><b>Explore video walls ↗</b></span>
+          </button>
+          <div class="solution-stack">
+            <button type="button" class="solution-row" (click)="setCategory('advertising-tv')" appReveal><span class="solution-icon">▣</span><span><strong>Advertising displays</strong><small>Promotions · Digital menus · Retail signage</small></span><span>↗</span></button>
+            <button type="button" class="solution-row" (click)="setCategory('banner-tv')" appReveal><span class="solution-icon">▯</span><span><strong>Portrait banner screens</strong><small>Stores · Entrances · Promotions</small></span><span>↗</span></button>
+            <button type="button" class="solution-row" (click)="setCategory('outdoor-display')" appReveal><span class="solution-icon">☀</span><span><strong>Outdoor signage</strong><small>Visibility · Weather considerations · Mounting</small></span><span>↗</span></button>
+            <button type="button" class="solution-row" (click)="setCategory('interactive-panel')" appReveal><span class="solution-icon">✧</span><span><strong>Interactive panels</strong><small>Classrooms · Meetings · Collaboration</small></span><span>↗</span></button>
+          </div>
+        </div>
+        <div class="solution-notice" appReveal><span>✳</span> Need multiple screens or custom installation? <button type="button" (click)="openEnquiry()">Plan a project with us ↗</button></div>
+      </div>
+    </section>
+
+    <section class="moment-section section-wrap" id="difference" aria-labelledby="moment-heading">
+      <div class="container moment-layout">
+        <div class="moment-image" appReveal><img [src]="natureImages.mountains" alt="Mountain scenery used to illustrate an immersive television experience" loading="lazy" (error)="onImageError($event)"><div class="moment-shade"></div><div class="moment-image-caption"><span>THE WORLD IN FULL VIEW</span><span>REALONE / EXPERIENCE NO. 02</span></div><div class="moment-image-symbol">✳</div></div>
+        <div class="moment-content" appReveal><p class="section-kicker"><span class="kicker-circle">✳</span> THE LITTLE THINGS ARE EVERYTHING</p><h2 id="moment-heading">Every detail.<br>Every color.<br><em>Every wow.</em></h2><p>Notice the tiny details. Get lost in the big moments. We believe a great TV doesn't just show you the world — it brings you closer to it.</p>
+          <div class="moment-highlights"><div><span class="highlight-icon">◈</span><span><b>Picture that pulls you in</b><small>Vibrant visuals, designed to impress.</small></span></div><div><span class="highlight-icon">⌁</span><span><b>Sound that surrounds you</b><small>More emotion in every moment.</small></span></div><div><span class="highlight-icon">✧</span><span><b>Simple from the start</b><small>Comfortable smart-TV experiences.</small></span></div></div>
+          <a href="#showroom" class="text-link">Experience it for yourself <span>↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="brightness-section section-wrap" aria-labelledby="brightness-heading">
+      <div class="container">
+        <div class="brightness-header" appReveal><div><p class="section-kicker"><span class="kicker-circle">✳</span> INTERACTIVE PICTURE PLAYGROUND</p><h2 id="brightness-heading">A little brighter.<br><span class="text-muted">A lot more alive.</span></h2></div><p>Play with the demo brightness and imagine your next movie night. This is a visual simulation, not a measurement of a TV panel.</p></div>
+        <div class="brightness-demo" appReveal><div class="brightness-image-wrap"><img [src]="natureImages.aurora" alt="Aurora sky for interactive brightness illustration" (error)="onImageError($event)" [style.filter]="'brightness(' + visualBrightness() + '%)'" loading="lazy"><div class="brightness-overlay"><span>THE REALONE VIEW</span><span>COLOR YOUR WORLD</span></div></div><div class="brightness-controls"><span class="brightness-label">DIM THE LIGHTS</span><input type="range" min="45" max="140" step="1" aria-label="Change preview image brightness" [value]="visualBrightness()" (input)="visualBrightness.set(+$any($event.target).value)"><span class="brightness-value">{{visualBrightness()}}%</span></div></div>
+      </div>
+    </section>
+
+    <section class="promise-section section-wrap" aria-labelledby="promise-heading"><div class="container"><div class="promise-title" appReveal><p class="section-kicker"><span class="kicker-circle">✳</span> SHOP LOCAL. FEEL AT HOME.</p><h2 id="promise-heading">A better TV experience,<br><span class="text-muted">from hello to home.</span></h2></div><div class="promise-grid">
+      <div class="promise-item" appReveal><span class="promise-num">01 /</span><div class="promise-symbol">◎</div><h3>Real conversations.</h3><p>No confusing jargon. Just friendly help to find your perfect fit.</p></div>
+      <div class="promise-item" appReveal><span class="promise-num">02 /</span><div class="promise-symbol">◈</div><h3>See before you decide.</h3><p>Compare sizes, explore picture styles, and choose with confidence.</p></div>
+      <div class="promise-item" appReveal><span class="promise-num">03 /</span><div class="promise-symbol">✳</div><h3>Here for your setup.</h3><p>Talk with the store about delivery, installation, and available support.</p></div>
+    </div></div></section>
+
+
+    <section id="connect" class="social-section section-wrap" aria-labelledby="social-title">
+      <div class="container social-layout">
+        <div appReveal><p class="section-kicker"><span class="kicker-circle">✳</span> STAY IN THE PICTURE</p><h2 id="social-title">Follow what<br><em>moves you.</em></h2><p>See new launches, beautiful display demos, store updates and behind-the-scenes content. Connect with RealOne on your favourite platform.</p></div>
+        <div class="social-links-big" appReveal>
+          <button type="button" (click)="openSocial('instagram')"><span class="social-glyph">◎</span><span>Instagram<small>Photos, reels, new arrivals</small></span><b>↗</b></button>
+          <button type="button" (click)="openSocial('youtube')"><span class="social-glyph">▶</span><span>YouTube<small>TV demos, videos, guides</small></span><b>↗</b></button>
+          <button type="button" (click)="openWhatsApp()"><span class="social-glyph">✆</span><span>WhatsApp<small>Ask a question or request a quote</small></span><b>↗</b></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="showroom" class="showroom-section section-wrap" aria-labelledby="showroom-heading"><div class="container"><div class="showroom-card" appReveal><div class="showroom-halo"></div><div class="showroom-copy"><p class="section-kicker"><span class="kicker-circle">✳</span> YOUR NEXT FAVORITE VIEW IS WAITING</p><h2 id="showroom-heading">Ready for<br><em>the big picture?</em></h2><p>Tell us about your home, store, office or event. We’ll help you choose the right kind of display.</p><div class="showroom-buttons"><button type="button" class="btn btn-primary" (click)="openEnquiry()">Request a quote <span class="round-arrow">↗</span></button><a class="showroom-link" href="#collection">Browse displays <span>↗</span></a></div></div><div class="showroom-art"><div class="showroom-orbit orbit-one"></div><div class="showroom-orbit orbit-two"></div><div class="showroom-ring">✳</div><span class="showroom-small-top">EVERY VIEW GETS BIGGER</span><span class="showroom-small-bottom">WITH REALONE</span></div></div></div></section>
+  </main>
+
+  <footer class="site-footer"><div class="container"><div class="footer-top"><div><a class="brand footer-brand" href="#top"><span class="brand-emblem" aria-hidden="true"><span></span></span><span>real<span class="brand-one">One</span><span class="brand-period">.</span></span></a><p>For the moments worth watching.<br>And the memories worth making.</p></div><div class="footer-links"><div><b>EXPLORE</b><a href="#categories">All categories</a><a href="#collection">Compare displays</a><a href="#solutions">Business solutions</a></div><div><b>LET'S CONNECT</b><button type="button" (click)="openSocial('instagram')">Instagram</button><button type="button" (click)="openSocial('youtube')">YouTube</button><button type="button" (click)="toggleChat()">Website chat</button><a href="#top">Back to top ↑</a></div></div></div><div class="footer-bottom"><span>© {{year}} REALONE. BUILT FOR BETTER VIEWING.</span><span>DEMO WEBSITE · REPLACE SAMPLE PRODUCT DETAILS BEFORE LAUNCH</span><span>MADE WITH <span class="heart">♥</span> FOR THE BIG SCREEN</span></div></div></footer>
+
+  @if (comparedIds().length > 0) {
+    <div class="compare-tray"><div class="container compare-tray-inner"><div><span class="compare-tray-dot">✓</span><strong>{{comparedIds().length}} TV{{comparedIds().length === 1 ? '' : 's'}} selected</strong><span class="compare-tray-names">Ready to compare</span></div><div class="compare-tray-buttons"><button type="button" class="compare-clear" (click)="comparedIds.set([])">Clear</button><button type="button" class="compare-open" (click)="isCompareOpen.set(true)" [disabled]="comparedIds().length < 2">Compare now ↗</button></div></div></div>
+  }
+
+  @if (isCompareOpen()) {
+    <div class="modal-overlay" (click)="isCompareOpen.set(false)" role="presentation">
+      <div class="modal-panel compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title" (click)="$event.stopPropagation()">
+        <button type="button" class="modal-close" (click)="isCompareOpen.set(false)" aria-label="Close comparison">×</button>
+        <p class="section-kicker">SIDE BY SIDE / UP TO THREE DISPLAYS</p><h2 id="compare-title">Compare with clarity.</h2>
+        <div class="compare-table-scroll"><table class="compare-table"><thead><tr><th>SPECIFICATION</th>
+          @for (product of comparedProducts(); track product.id) { <th>{{product.name}}<small>{{product.categoryLabel}}</small></th> }
+        </tr></thead><tbody>
+          <tr><td>TYPE</td>@for (p of comparedProducts(); track p.id) {<td>{{p.categoryLabel}}</td>}</tr>
+          <tr><td>SIZE</td>@for (p of comparedProducts(); track p.id) {<td>{{p.size}}”</td>}</tr>
+          <tr><td>RESOLUTION*</td>@for (p of comparedProducts(); track p.id) {<td>{{p.resolution}}</td>}</tr>
+          <tr><td>PANEL*</td>@for (p of comparedProducts(); track p.id) {<td>{{p.panel}}</td>}</tr>
+          <tr><td>REFRESH RATE*</td>@for (p of comparedProducts(); track p.id) {<td>{{p.refresh}}</td>}</tr>
+          <tr><td>BRIGHTNESS</td>@for (p of comparedProducts(); track p.id) {<td>{{p.brightness}}</td>}</tr>
+          <tr><td>ORIENTATION</td>@for (p of comparedProducts(); track p.id) {<td>{{p.orientation}}</td>}</tr>
+          <tr><td>SYSTEM*</td>@for (p of comparedProducts(); track p.id) {<td>{{p.system}}</td>}</tr>
+          <tr><td>SOUND*</td>@for (p of comparedProducts(); track p.id) {<td>{{p.sound}}</td>}</tr>
+          <tr><td>PORTS*</td>@for (p of comparedProducts(); track p.id) {<td>{{p.ports}}</td>}</tr>
+          <tr><td>BEST FOR</td>@for (p of comparedProducts(); track p.id) {<td>{{p.bestFor}}</td>}</tr>
+          <tr><td>WARRANTY</td>@for (p of comparedProducts(); track p.id) {<td>{{p.warranty}}</td>}</tr>
+          <tr><td>PRICE</td>@for (p of comparedProducts(); track p.id) {<td>Ask for quote</td>}</tr>
+          <tr><td>ENQUIRE</td>@for (p of comparedProducts(); track p.id) {<td><button type="button" class="compare-enquiry" (click)="openEnquiry(p)">Request quote ↗</button></td>}</tr>
+        </tbody></table></div>
+        <p class="modal-footnote">*Specifications and product names are illustrative only. Verify exact model details with the seller.</p>
+      </div>
+    </div>
+  }
+
+  @if (selectedProduct(); as product) {
+    <div class="modal-overlay" (click)="closeProduct()" role="presentation">
+      <div class="modal-panel product-modal" role="dialog" aria-modal="true" aria-labelledby="product-detail-title" (click)="$event.stopPropagation()">
+        <button type="button" class="modal-close" (click)="closeProduct()" aria-label="Close product details">×</button>
+        <p class="section-kicker">{{product.categoryLabel}} / CONCEPT DISPLAY</p>
+        <h2 id="product-detail-title">{{product.name}}</h2>
+        <div class="product-detail-hero"><img [src]="product.image" [alt]="product.name + ' sample scenery'" (error)="onImageError($event)"></div>
+        <p class="modal-intro">{{product.subtitle}} A concept product to help customers understand the types of displays available.</p>
+        <div class="detail-highlights">@for (highlight of product.highlights; track highlight) {<span>✳ {{highlight}}</span>}</div>
+        <div class="detail-grid">
+          <div><small>SCREEN SIZE</small><strong>{{product.size}}”</strong></div>
+          <div><small>RESOLUTION*</small><strong>{{product.resolution}}</strong></div>
+          <div><small>PANEL*</small><strong>{{product.panel}}</strong></div>
+          <div><small>REFRESH*</small><strong>{{product.refresh}}</strong></div>
+          <div><small>BRIGHTNESS</small><strong>{{product.brightness}}</strong></div>
+          <div><small>ORIENTATION</small><strong>{{product.orientation}}</strong></div>
+          <div><small>OPERATING SYSTEM*</small><strong>{{product.system}}</strong></div>
+          <div><small>PORTS*</small><strong>{{product.ports}}</strong></div>
+          <div><small>BEST FOR</small><strong>{{product.bestFor}}</strong></div>
+          <div><small>WARRANTY</small><strong>{{product.warranty}}</strong></div>
+        </div>
+        <div class="modal-actions"><button type="button" class="btn btn-primary" (click)="openEnquiry(product)">Request a quote <span class="round-arrow">↗</span></button><button type="button" class="btn btn-outline" (click)="toggleCompare(product.id); closeProduct()">{{isCompared(product.id) ? 'Remove from compare' : 'Add to compare'}}</button></div>
+        <p class="modal-footnote">All entries are demonstration content. No verified stock or prices are implied.</p>
+      </div>
+    </div>
+  }
+
+  @if (isEnquiryOpen()) {
+    <div class="modal-overlay" (click)="closeEnquiry()" role="presentation"><div class="modal-panel contact-modal" role="dialog" aria-modal="true" aria-labelledby="enquiry-title" (click)="$event.stopPropagation()"><button type="button" class="modal-close" (click)="closeEnquiry()" aria-label="Close enquiry">×</button><p class="section-kicker"><span class="kicker-circle">✳</span> LET'S FIND YOUR SCREEN</p><h2 id="enquiry-title">Say hello.<br><em>Let’s talk displays.</em></h2><p class="modal-intro">Add your details to create an enquiry. Copy it to share, or send directly when the seller's WhatsApp number is configured.</p><form (submit)="$event.preventDefault(); copyEnquiry()"><label for="model-select">INTERESTED IN</label><select id="model-select" [ngModel]="requestedModel()" (ngModelChange)="requestedModel.set($event)" name="model"><option>Help me choose a display</option>@for (product of products; track product.id) {<option [value]="product.name">{{product.name}} — {{product.size}}”</option>}</select><div class="field-grid"><div><label for="cust-name">YOUR NAME</label><input id="cust-name" type="text" name="name" [(ngModel)]="customer.name" placeholder="Your name" autocomplete="name"></div><div><label for="cust-phone">PHONE NUMBER</label><input id="cust-phone" type="tel" name="phone" [(ngModel)]="customer.phone" placeholder="Your contact number" autocomplete="tel"></div></div><label for="cust-message">MESSAGE (OPTIONAL)</label><textarea id="cust-message" name="message" rows="3" [(ngModel)]="customer.message" placeholder="What would you like to know?"></textarea><div class="modal-actions"><button type="submit" class="btn btn-primary">{{isCopied() ? 'Copied ✓' : 'Copy enquiry'}} <span class="round-arrow">↗</span></button><button type="button" class="btn btn-outline" (click)="openWhatsApp()">WhatsApp ↗</button></div><p class="modal-footnote">@if (!store.whatsappNumber) {WhatsApp is in setup mode. Configure a business number in <code>src/app/store.config.ts</code> to enable sending.} @else {WhatsApp opens with your enquiry prefilled; you must press Send there.}</p></form></div></div>
+  }
+
+  <div class="chat-widget" [class.chat-shifted]="comparedIds().length > 0">
+    @if (chatOpen()) {
+      <section class="chat-panel" aria-label="RealOne website chat">
+        <div class="chat-header"><span class="chat-avatar">✳</span><span><strong>RealOne display assistant</strong><small>Guided demo chat · not a live agent</small></span><button type="button" (click)="toggleChat()" aria-label="Close chat">×</button></div>
+        <div #chatConversation class="chat-conversation" aria-live="polite">
+          @for (message of chatMessages(); track $index) {
+            <p class="chat-message" [class.chat-customer]="message.author === 'customer'">{{message.text}}</p>
+          }
+        </div>
+        <div class="chat-topics" aria-label="Common chat topics">
+          <button type="button" (click)="chooseChatTopic('Home TVs')">Home TVs</button>
+          <button type="button" (click)="chooseChatTopic('Advertising displays')">Advertising</button>
+          <button type="button" (click)="chooseChatTopic('Monitors')">Monitors</button>
+          <button type="button" (click)="chooseChatTopic('Installation')">Installation</button>
+        </div>
+        <form class="chat-input-row" (submit)="$event.preventDefault(); sendChat()">
+          <input type="text" name="chatMessage" [(ngModel)]="chatText" placeholder="Ask about screens…" aria-label="Type chat message" maxlength="500">
+          <button type="submit" aria-label="Send message to demo assistant">➤</button>
+        </form>
+        <button type="button" class="chat-whatsapp" (click)="openWhatsApp(true)">Continue on WhatsApp ↗</button>
+        <p class="chat-disclaimer">Chat is on-device sample guidance. It does not contact store staff until you send through WhatsApp.</p>
+      </section>
+    }
+    <button type="button" class="chat-launcher" (click)="toggleChat()" [attr.aria-expanded]="chatOpen()" aria-label="Open RealOne chat assistant"><span>{{chatOpen() ? '×' : '✳'}}</span> {{chatOpen() ? 'Close chat' : 'Ask RealOne'}}</button>
+  </div>
+
+  @if (toast()) {<div class="toast" role="status">✳ &nbsp;{{toast()}}</div>}
+</div>

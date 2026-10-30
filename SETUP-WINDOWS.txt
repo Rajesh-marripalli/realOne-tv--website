@@ -1,0 +1,31 @@
+REALONE — ANGULAR 21 FULL FRONTEND
+===================================
+
+1. Extract realone-angular-complete.zip.
+2. Open the extracted folder in VS Code.
+3. Run PowerShell in the folder containing package.json:
+
+     node -v
+     npm -v
+     npm install
+     npm start
+
+4. Open http://localhost:4200
+
+CUSTOMIZATION:
+  Business phone and Instagram/YouTube: src/app/store.config.ts
+  Actual TVs and commercial display specs: src/app/catalog.ts
+  Wildlife/forest background and hummingbird: src/app/app.component.html
+  All animation/design: src/app/app.component.css
+  Owl video: public/media/owl-wildlife.mp4
+
+BUILD:
+  npm run build
+
+In-page chatbot is a local demo. WhatsApp opens with a prefilled draft after
+setting the REAL seller number. For live human chat and automated notifications,
+a separate backend + WhatsApp Business Platform API credentials are required.
+
+If @angular/build:dev-server is missing:
+  Remove any failed/incomplete node_modules folder, then run npm install in
+  THIS folder. Ensure your computer can reach npmjs.com.
