@@ -1,0 +1,74 @@
+name: Deploy RealOne TV to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Angular Application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build RealOne Angular Website
+        run: npx ng build --configuration production --base-href /realOne-tv--website/
+
+      - name: Prepare GitHub Pages Files
+        shell: bash
+        run: |
+          if [ -f dist/realone-tv/browser/index.html ]; then
+            SITE_DIR="dist/realone-tv/browser"
+          elif [ -f dist/realone-tv/index.html ]; then
+            SITE_DIR="dist/realone-tv"
+          else
+            echo "ERROR: Angular index.html not found"
+            exit 1
+          fi
+
+          mkdir -p site
+          cp -R "$SITE_DIR"/. site/
+
+          cp site/index.html site/404.html
+          touch site/.nojekyll
+
+      - name: Upload Website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy Website
+        id: deployment
+        uses: actions/deploy-pages@v4
